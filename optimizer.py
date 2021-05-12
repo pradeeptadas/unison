@@ -15,6 +15,7 @@ class UOptimizer:
         self.include_unison=include_unison
         self.beta=beta
         self.alpha=alpha
+        self.weights = None
         
         self.return_to_use = None
         self.annualized_return_to_use = None
@@ -104,7 +105,7 @@ class UOptimizer:
         max_sharpe_idx = np.argmax(sharpe)
         min_vol_idx = np.argmin(risks)
         
-        UOptimizer.matplot_eff_frontier(returns, risks, sharpe)
+        #UOptimizer.matplot_eff_frontier(returns, risks, sharpe)
         return weights, np.asarray(returns), np.asarray(risks), sharpe
     
     @staticmethod
@@ -139,14 +140,8 @@ class UOptimizer:
         high_weight_bound = [i[1]/100 for k, i in weights_dict.items() if self.include_unison or k!="Unison"]
         return np.asarray(low_weight_bound).reshape(-1,1), np.asarray(high_weight_bound).reshape(-1,1)
     
-    def optimize_main(self, weights_dict):
-        """ does what it says """
-        ret = self.return_to_use
-        low_weight_bound, high_weight_bound = self.parse_weights(weights_dict)
-        weights, returns, risks, sharpe = self.optimal_portfolio(ret, 
-                                                                 low_weight_bound, 
-                                                                 high_weight_bound)
-        
+    def summarize(self, returns, risks, sharpe):
+        weights = self.weights
         ind_opt = np.argmax(sharpe)            # Index of selected portfolio
 
         opt_portfolio = {}
@@ -170,4 +165,14 @@ class UOptimizer:
         output["Weights%"] = wt[ind_w]
         output = output.reset_index(drop=True)
         st.write(output)
+        
+    def optimize_main(self, weights_dict):
+        """ does what it says """
+        ret = self.return_to_use
+        low_weight_bound, high_weight_bound = self.parse_weights(weights_dict)
+        weights, returns, risks, sharpe = self.optimal_portfolio(ret, 
+                                                                 low_weight_bound, 
+                                                                 high_weight_bound)
+        
+        self.weights = weights
         return returns, risks, sharpe

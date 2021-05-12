@@ -79,6 +79,7 @@ def main(optimizer, optimizer_unison):
             #)
         )
     )
+    
     fig.update_layout(legend=dict(
         yanchor="top",
         y=0.99,
@@ -102,7 +103,13 @@ def main(optimizer, optimizer_unison):
                       #width=800, height=800,
                       margin=dict(l=40, r=40, b=40, t=40))
     st.plotly_chart(fig)
-
+    
+    optimizer.matplot_eff_frontier(x, y, sharpe)
+    optimizer.summarize(x, y, sharpe)
+    
+    optimizer_unison.matplot_eff_frontier(x1, y1, sharpe1)
+    optimizer_unison.summarize(x1, y1, sharpe1)
+    
 @st.cache
 def load_optimizer():
     optimizer = UOptimizer('timeseriesUpdated.xlsx', include_unison=False)
