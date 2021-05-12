@@ -110,7 +110,7 @@ def main(optimizer, optimizer_unison):
     optimizer_unison.matplot_eff_frontier(x1, y1, sharpe1)
     optimizer_unison.summarize(x1, y1, sharpe1)
     
-@st.cache
+#@st.cache
 def load_optimizer():
     optimizer = UOptimizer('timeseriesUpdated.xlsx', include_unison=False)
     optimizer_unison = UOptimizer('timeseriesUpdated.xlsx')

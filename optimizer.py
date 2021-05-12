@@ -141,6 +141,7 @@ class UOptimizer:
         return np.asarray(low_weight_bound).reshape(-1,1), np.asarray(high_weight_bound).reshape(-1,1)
     
     def summarize(self, returns, risks, sharpe):
+        ret = self.return_to_use
         weights = self.weights
         ind_opt = np.argmax(sharpe)            # Index of selected portfolio
 
