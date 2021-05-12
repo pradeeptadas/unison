@@ -36,7 +36,7 @@ def main(optimizer, optimizer_unison):
                                           step=1,
                                           value=(0, 30))
     run_button = st.sidebar.button(label='Run Optimization')
-    unison_beta = st.sidebar.number_input("Unison Beta", value=0.4)
+    unison_beta = st.sidebar.number_input("Unison Beta", value=2.1)
     unison_alpha = st.sidebar.number_input("Unison Alpha", value=0.01)
     
     # App ###########################################################

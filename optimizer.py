@@ -8,7 +8,7 @@ import json
 pd.options.display.float_format = '{:.2%}'.format
 
 class UOptimizer: 
-    def __init__(self, path, include_unison=True, beta=0.4, alpha=0.01):
+    def __init__(self, path, include_unison=True, beta=2.1, alpha=0.01):
         """ does what it says """
         self.path = path
         self.data = self.load_data(path)
@@ -92,7 +92,6 @@ class UOptimizer:
         h = opt.matrix(np.vstack((low_weight_bound, high_weight_bound)))
         A = opt.matrix(1.0, (1, n_assets))
         b = opt.matrix(1.0)
-        st.write(np.vstack((-np.eye(n_assets), np.eye(n_assets))).shape)
         # Calculate efficient frontier weights using quadratic programming
         portfolios = [solvers.qp(mu * S, -pbar, G, h, A, b)['x'] for mu in mus]
         sol = solvers.qp(S, -pbar, G, h, A, b)
