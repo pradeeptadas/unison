@@ -12,29 +12,43 @@ class UOptimizer:
         """ does what it says """
         self.path = path
         self.data = self.load_data(path)
-        self.include_unison=include_unison
-        self.beta=beta
-        self.alpha=alpha
+        self.include_unison = include_unison
+        self.beta = beta
+        self.alpha = alpha
         self.weights = None
+        self.period = 12
         
         self.return_to_use = None
         self.annualized_return_to_use = None
         self.annualized_vol_to_use = None
+        
         #set returns and volatility
-        self.set_returns_vols(12)
+        self.set_returns_vols()
        
-    def set_unison_alpha_beta(alpha, beta):
+    @staticmethod
+    def get_name_dict():
+        return {'M1US Index':"MSCI USA Net TR USD",
+                'MXEF Index':"MSCI Emerging Markets",
+                'LBUSTRUU Index':"Bloomberg Barclays US Agg Total Ret Unhedged",
+                'LUATTRUU Index':"Bloomberg Barclays US Treasury",
+                'JPEIDIVR Index':"JPMorgan Monthly EMBIs",
+                'LF98TRUU Index':"Bloomberg Barclays US Corporate High Yield TR",
+                'CSUSHPINSA': "Case-Shiller Index"
+                }
+    
+    def set_unison_alpha_beta(self, alpha, beta):
         """ does what it says """
         self.alpha = alpha
         self.beta = beta
+        self.set_returns_vols()
         
-    def set_returns_vols(self, period): 
+    def set_returns_vols(self): 
         """ does what it says """
-        self.return_to_use = self.logReturns(self.data, period).dropna()
+        self.return_to_use = self.logReturns(self.data, self.period).dropna()
         if self.include_unison:
             self.return_to_use["Unison"] = self.beta * (self.return_to_use['CSUSHPINSA'] + self.alpha)
-        self.annualized_vol_to_use = self.return_to_use.std() * np.sqrt(12/period)
-        self.annualized_return_to_use = self.return_to_use * (12/period)
+        self.annualized_vol_to_use = self.return_to_use.std() * np.sqrt(12/self.period)
+        self.annualized_return_to_use = self.return_to_use * (12/self.period)
         self.cleanup()
             
     @staticmethod
@@ -63,7 +77,7 @@ class UOptimizer:
 
     def cleanup(self):
         """ does what it says """
-        stocks_to_be_dropped = ['LUCRTRUU Index','LGL1TRUU Index', 'MLCUWXU Index']
+        stocks_to_be_dropped = ['LUCRTRUU Index','LGL1TRUU Index', 'MLCUWXU Index', 'CSUSHPINSA']
         self.return_to_use = self.return_to_use.drop(stocks_to_be_dropped, axis=1)
         self.annualized_vol_to_use = self.annualized_vol_to_use.drop(stocks_to_be_dropped)
         self.annualized_return_to_use = self.annualized_return_to_use.drop(stocks_to_be_dropped, axis=1)
@@ -127,11 +141,6 @@ class UOptimizer:
         plt.grid()
         plt.legend()
         st.pyplot(fig)
-        
-    @staticmethod
-    def plotly_eff_frontier():
-        """ does what it says """
-        pass
     
     def parse_weights(self, weights_dict):
         """ does what it says """
